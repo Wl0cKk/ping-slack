@@ -1,5 +1,6 @@
 require_relative '.config.rb'
 require 'slack-ruby-client'
+require 'securerandom'
 require 'rb-inotify'
 
 Slack.configure { |config| config.token = TOKEN }
@@ -13,7 +14,7 @@ last_message_ts = nil
 notifier.watch(watched_file, :modify) do
     begin
         client.chat_delete(channel: '#pingpong', ts: last_message_ts) if last_message_ts
-        response = client.chat_postMessage(channel: '#pingpong', text: 'ping')
+        response = client.chat_postMessage(channel: '#pingpong', text: "ping - #{SecureRandom.uuid}")
         last_message_ts = response['ts']
     rescue Slack::Web::Api::Error => e
         puts "Error sending/deleting message: #{e.message}"
